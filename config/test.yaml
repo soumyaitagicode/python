@@ -1,0 +1,4 @@
+secrets:
+  - Vokey: key_v
+    content_type: text
+    path: /test/
