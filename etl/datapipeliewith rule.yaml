@@ -1,0 +1,48 @@
+import yaml
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+# Read YAML file with data validation rules
+def read_data_validation_rules(yaml_file):
+    with open(yaml_file, 'r') as file:
+        data = yaml.safe_load(file)
+        return data.get('data_validation_rules', [])
+
+# Perform data validation
+def validate_data(df, rules):
+    for rule in rules:
+        column_name = rule['column_name']
+        if 'valid_values' in rule:
+            valid_values = rule['valid_values']
+            invalid_data = df.filter(~col(column_name).isin(valid_values))
+            if invalid_data.count() > 0:
+                print(f"Invalid data found in column '{column_name}':")
+                invalid_data.show()
+        elif 'min_value' in rule and 'max_value' in rule:
+            min_value = rule['min_value']
+            max_value = rule['max_value']
+            invalid_data = df.filter((col(column_name) < min_value) | (col(column_name) > max_value))
+            if invalid_data.count() > 0:
+                print(f"Invalid data found in column '{column_name}':")
+                invalid_data.show()
+
+# Create SparkSession
+spark = SparkSession.builder \
+    .appName("Data Validation Pipeline") \
+    .getOrCreate()
+
+# Set AWS credentials
+spark.sparkContext._jsc.hadoopConfiguration().set("fs.s3a.access.key", "your_access_key")
+spark.sparkContext._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "your_secret_key")
+
+# Read Parquet file from S3
+df = spark.read.parquet("s3a://bucket/path/to/parquet_file")
+
+# Read data validation rules from YAML
+rules = read_data_validation_rules("data_validation_rules.yaml")
+
+# Perform data validation
+validate_data(df, rules)
+
+# Stop SparkSession
+spark.stop()

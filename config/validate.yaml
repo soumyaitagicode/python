@@ -1,0 +1,6 @@
+data_validation_rules:
+  - column_name: column1
+    valid_values: [a, b, c]
+  - column_name: column2
+    min_value: -100
+    max_value: 100
