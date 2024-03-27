@@ -1,10 +1,7 @@
-etl_template_project/
-├── dags/
-│   └── etl_dag.py
-├── scripts/
-│   └── etl_script.py
-└── pipelines/
-    └── sample_pipeline.json
+
+
+
+
 
     
 pipeline_name: Name of the pipeline.
@@ -17,3 +14,16 @@ In the template project structure:
 dags/: Contains Apache Airflow DAG definitions.
 scripts/: Contains Python scripts for ETL jobs.
 pipelines/: Contains JSON files defining pipeline configurations.
+
+
+
+
+
+etl_template_project/
+├── dags/
+│   └── etl_dag.py
+├── scripts/
+│   └── etl_script.py
+└── pipelines/
+    └── sample_pipeline.json
+
